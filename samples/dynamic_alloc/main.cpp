@@ -15,7 +15,9 @@
 //  dynamically-allocated region into which we copy the code, altering the
 //  return value, from the assembly function `CodeTemplate` as a template.
 //
+#ifndef _CRT_SECURE_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
+#endif
 #include <iostream>
 #include <functional>
 #include <assert.h>

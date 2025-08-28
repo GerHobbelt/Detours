@@ -22,7 +22,7 @@ static DWORD    s_dwDataPerm = 0;
 
 static LONG ExceptCatch(LONG nTry, DWORD dwException, LPEXCEPTION_POINTERS pinfo)
 {
-    printf("      ExceptCatch(%ld, %08lx, %08lx)\n", nTry, dwException, (ULONG)pinfo);
+    printf("      ExceptCatch(%ld, %08lx, %16p)\n", nTry, dwException, (void *)pinfo);
 #ifdef INCLUDE_THIS
     if (nTry == 0) {
         return EXCEPTION_CONTINUE_EXECUTION;
@@ -70,10 +70,10 @@ LONG WINAPI MyVirtualFaultFilter(PEXCEPTION_POINTERS pException)
     if (pExceptRec->ExceptionCode == 0xc0000005) {
         printf("--        Memory access exception.\n");
         if (pExceptRec->NumberParameters >= 2 &&
-            pExceptRec->ExceptionInformation[1] >= (ULONG)s_pvData &&
-            pExceptRec->ExceptionInformation[1] <= (ULONG)s_pvData + sizeof(ULONG)) {
+            pExceptRec->ExceptionInformation[1] >= (ULONG_PTR)s_pvData &&
+            pExceptRec->ExceptionInformation[1] <= (ULONG_PTR)s_pvData + sizeof(ULONG_PTR)) {
 
-            VirtualProtect(s_pvData, sizeof(ULONG), PAGE_READWRITE, &s_dwDataPerm);
+            VirtualProtect(s_pvData, sizeof(ULONG_PTR), PAGE_READWRITE, &s_dwDataPerm);
             printf("--        Changed permissions.\n");
             return EXCEPTION_CONTINUE_EXECUTION;
         }
@@ -88,14 +88,14 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE hprev, LPSTR lpszCmdLine, int nCmd
     (void)lpszCmdLine;
     (void)nCmdShow;
 
-    s_pvData = VirtualAlloc(NULL, sizeof(ULONG), MEM_RESERVE|MEM_COMMIT, PAGE_READWRITE);
+    s_pvData = VirtualAlloc(NULL, sizeof(ULONG_PTR), MEM_RESERVE|MEM_COMMIT, PAGE_READWRITE);
     if (s_pvData == NULL) {
         printf("VirtualAlloc failed: %ld\n", GetLastError());
         return 0;
     }
     *(PULONG)s_pvData = 1;
 
-    VirtualProtect(s_pvData, sizeof(ULONG), PAGE_READONLY, &s_dwDataPerm);
+    VirtualProtect(s_pvData, sizeof(ULONG_PTR), PAGE_READONLY, &s_dwDataPerm);
 
     DetourFirstChanceExceptionFilter(MyVirtualFaultFilter);
 
@@ -107,9 +107,9 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE hprev, LPSTR lpszCmdLine, int nCmd
     }
     printf("-- safe ------------------------------------------\n");
     safe(nTry);
-    VirtualProtect(s_pvData, sizeof(ULONG), PAGE_READWRITE, &s_dwDataPerm);
-    *(PULONG)s_pvData = 1;
-    VirtualProtect(s_pvData, sizeof(ULONG), PAGE_READONLY, &s_dwDataPerm);
+    VirtualProtect(s_pvData, sizeof(ULONG_PTR), PAGE_READWRITE, &s_dwDataPerm);
+    *(PULONG_PTR)s_pvData = 1;
+    VirtualProtect(s_pvData, sizeof(ULONG_PTR), PAGE_READONLY, &s_dwDataPerm);
 
     printf("-- raw -------------------------------------------\n");
     printf("*\n");

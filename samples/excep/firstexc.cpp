@@ -52,8 +52,8 @@ static VOID WINAPI RemoveAllExceptionHandlers(VOID)
     __asm mov eax, FS:[0];
     __asm mov [pVCExcRec], eax;
 
-    for (pLastGood = pVCExcRec; (ULONG)pVCExcRec != ~0ul; ) {
-        if ((ULONG)pVCExcRec >= 0x30000000)
+    for (pLastGood = pVCExcRec; (ULONG_PTR)pVCExcRec != ~0ul; ) {
+        if ((ULONG_PTR)pVCExcRec >= 0x30000000)
             break;
 
         pLastGood = pVCExcRec;
