@@ -10,6 +10,9 @@
 //  (once for each supported module format).
 //
 
+// only compile this source file when it's loaded by another:
+#if defined(DETOURS_BITS_XX) // which will have been set up, repeatedly, by its loader: creatwth.cpp
+
 #define DETOURS_INTERNAL
 #include "detours.h"
 
@@ -334,3 +337,5 @@ static BOOL UPDATE_IMPORTS_XX(HANDLE hProcess,
     fSucceeded = TRUE;
     goto finish;
 }
+
+#endif // DETOURS_BITS_XX

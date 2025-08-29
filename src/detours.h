@@ -69,6 +69,11 @@
 //
 #define ERROR_DYNAMIC_CODE_BLOCKED       1655L
 
+// fix warning C5032 : detected #pragma warning(push) with no corresponding #pragma warning(pop)
+#if _MSC_VER >= 1900
+#pragma warning(pop)
+#endif
+
 #endif // DETOURS_INTERNAL
 
 //////////////////////////////////////////////////////////////////////////////

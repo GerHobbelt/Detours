@@ -4278,6 +4278,10 @@ PVOID WINAPI DetourCopyInstruction(_In_opt_ PVOID pDst,
 
 #endif // DETOURS_ARM64
 
+// fix warning C5251 : the value of #pragma data_seg changed after #include; #pragma data_seg(pop) missing in this header?
+#pragma data_seg()
+#pragma const_seg()
+
 BOOL WINAPI DetourSetCodeModule(_In_ HMODULE hModule,
                                 _In_ BOOL fLimitReferencesToModule)
 {

@@ -72,6 +72,9 @@ PDETOUR_SYM_INFO DetourLoadImageHlp(VOID)
         return NULL;
     }
 
+// fix warning C4191 : 'type cast' : unsafe conversion from 'FARPROC' to 'PF_ImagehlpApiVersionEx', etc.
+#pragma warning(disable: 4191)
+
     symInfo.pfImagehlpApiVersionEx
         = (PF_ImagehlpApiVersionEx)GetProcAddress(symInfo.hDbgHelp,
                                                   "ImagehlpApiVersionEx");
