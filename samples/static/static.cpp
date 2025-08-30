@@ -2,24 +2,24 @@
 //
 //  Test a detour of a member function (member.cpp of member.exe)
 //
-//
+
 #include <stdio.h>
 
 #include <windows.h>
 #include <detours.h>
 
 
-// Ä¿±êº¯Êı
-void Target(void)
+// ç›®æ ‡å‡½æ•°
+static void Target(void)
 {
     printf("  Target Func! \n");
 }
 
-// Detours ±ØÒªÌõ¼ş1: ¶¨ÒåÒ»¸öº¯ÊıÖ¸Õë£¬Ö¸ÏòÄ¿±êº¯Êı
-void(*real_Target)(void) = &Target;
+// Detours å¿…è¦æ¡ä»¶1: å®šä¹‰ä¸€ä¸ªå‡½æ•°æŒ‡é’ˆï¼ŒæŒ‡å‘ç›®æ ‡å‡½æ•°
+static void(*real_Target)(void) = &Target;
 
-// Detours ±ØÒªÌõ¼ş2: ¶¨ÒåÒ»¸öMineº¯Êı£¬ÓÃÓÚÌæ»»Ä¿±êº¯Êı
-void Mine_Target(void)
+// Detours å¿…è¦æ¡ä»¶2: å®šä¹‰ä¸€ä¸ªMineå‡½æ•°ï¼Œç”¨äºæ›¿æ¢ç›®æ ‡å‡½æ•°
+static void Mine_Target(void)
 {
     printf("  Mine_Target Func!\n");
 
@@ -30,14 +30,15 @@ void Mine_Target(void)
 //
 int main(int argc, char **argv)
 {
-    (void)argc;(void)argv;
+    (void)argc;
+    (void)argv;
 
-    //Step1: µ÷ÓÃÄ¿±êº¯Êı
+    //Step1: è°ƒç”¨ç›®æ ‡å‡½æ•°
     printf("Calling target befor Detour:\n");
     Target();
     printf("\n");
 
-    // Step2: Ê¹ÓÃDetour Hook Ä¿±êº¯ÊıºóÔÙ´Îµ÷ÓÃ
+    // Step2: ä½¿ç”¨Detour Hook ç›®æ ‡å‡½æ•°åå†æ¬¡è°ƒç”¨
     DetourTransactionBegin();
     DetourUpdateThread(GetCurrentThread());
     DetourAttach(&(PVOID&)real_Target, Mine_Target);
